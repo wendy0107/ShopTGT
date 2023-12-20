@@ -22,9 +22,9 @@ export const SignUp = () => {
                     <input type="password" placeholder="Password"/>
                 </div>
             </div>
-            {action !== "Sign Up" && (
+            {/* {action !== "Sign Up" && (
                 <div className="forgot-password">Forgot Password? <span>Click Here!</span></div>
-            )}
+            )} */}
             <div className="submit-container">
                 <div className={action==="Login"?"submit gray":"submit"} onClick={()=>{setAction("Sign Up")}}> Sign Up </div>
                 <div className={action==="Sign Up"?"submit gray":"submit"} onClick={()=>{setAction("Login")}}> Login </div>

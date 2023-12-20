@@ -71,7 +71,7 @@ body, html {
     font-size: 19px;
 }
 
-.forgot-password {
+/* .forgot-password {
     padding-left: 62px;
     margin-top: 27px;
     color: #797979;
@@ -82,7 +82,7 @@ body, html {
 .forgot-password span {
     color: #4c00b4;
     cursor: pointer;
-}
+} */
 
 .submit-container {
     display: flex;
