@@ -1,7 +1,7 @@
 import React from "react";
 import { Slider, Box } from "@mui/material";
 
-function ProgressBar({ currentStage, disabled }) {
+function ProgressBar({ currentStage }) {
 
   return (
     <Box
