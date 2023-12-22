@@ -15,7 +15,7 @@ function Listing({ listing }) {
           {listing.title}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          {listing.description}
+          posted by {listing.owner} on {listing.uploadDate}
         </Typography>
       </CardContent>
     </Card>
