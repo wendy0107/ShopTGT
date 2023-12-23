@@ -16,12 +16,14 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/material": "^5.15.1",
+    "@supabase/supabase-js": "^2.39.1",
     "phosphor-react": "^1.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
+    "@rollup/plugin-replace": "^5.0.5",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
