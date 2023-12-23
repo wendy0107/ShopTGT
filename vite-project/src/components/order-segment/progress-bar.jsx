@@ -2,7 +2,6 @@ import React from "react";
 import { Slider, Box } from "@mui/material";
 
 function ProgressBar({ currentStage }) {
-
   return (
     <Box
       sx={{
@@ -17,7 +16,7 @@ function ProgressBar({ currentStage }) {
         disabled
         sx={{
           "&.Mui-disabled": {
-            color:"blue",
+            color: "blue",
           },
           width: "70vw",
           display: "inline-block",

@@ -23,7 +23,7 @@ function AlertModal({ open, onClose }) {
     <Modal open={open} onClose={onClose}>
       <Box sx={{ ...style, width: "30vw" }}>
         <Typography variant="h7" align="center">
-          Your previous order has been removed. 
+          Your previous order (if any) has been removed. 
         </Typography>
         <Button
           variant="contained"

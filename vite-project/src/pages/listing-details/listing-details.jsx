@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import Navbar from "../../components/navbar";
 import { useEffect } from "react";
 import { orderDetails, listingDetails, listingOwner } from "../../listing-examples";
-import { CardMedia, Divider, Typography } from "@mui/material";
+import { CardMedia, Divider, Typography, Alert } from "@mui/material";
 import "./listing-details.css";
 import OrderSegment from "../../components/order-segment/order-segment";
 import ContactCard from "../../components/contact-card";
@@ -57,6 +57,9 @@ function ListingDetails() {
             </Typography>
             </div>
             </div>
+            <Alert severity="info" sx={{ margin: "1rem" }}>
+              Collection point: {listing.current.collectionPoint}
+            </Alert>
             <ContactCard 
               name={listingOwner.name}
               phone={listingOwner.phone}

@@ -16,9 +16,15 @@ function OrderSummary({ items, orderQuantities, toDisplayAll }) {
   const theme = useTheme();
 
   if (!toDisplayAll) {
-    items = items.filter((item, index) => orderQuantities[index] > 0);
+    let filteredItems = items.filter(
+      (item, index) => orderQuantities[index] > 0
+    );
+    let filteredQuantites = orderQuantities.filter((_, index) =>
+      filteredItems.includes(items[index])
+    );
+    items = filteredItems;
+    orderQuantities = filteredQuantites;
   }
-  
 
   const totalPayableAmount = items.reduce((total, item, index) => {
     return total + item.price * orderQuantities[index];
@@ -42,8 +48,8 @@ function OrderSummary({ items, orderQuantities, toDisplayAll }) {
               <TableRow key={item.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{item.name}</TableCell>
-                <TableCell>{orderQuantities[index]}</TableCell>
                 <TableCell>{`$${item.price}`}</TableCell>
+                <TableCell>{orderQuantities[index]}</TableCell>
                 <TableCell align="right">
                   {`$${item.price * orderQuantities[index]}`}
                 </TableCell>
