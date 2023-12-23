@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import Navbar from "../../components/navbar";
 import { useEffect } from "react";
 import {
@@ -10,11 +10,12 @@ import { CardMedia, Divider, Typography, Alert } from "@mui/material";
 import "./listing-details.css";
 import ContactCard from "../../components/contact-card";
 import ManageSegment from "../../components/manage-segment/manage-segment";
+import { NavContext } from "../../context/navContext";
 
 function ListingDetailsOwnerView() {
   const listing = useRef();
   listing.current = listingDetails;
-  console.log("listing details owner view refreshed");
+
   useEffect(() => {
     // Fetch listings data from the API
     // axios.get('/api/listings') // Replace with your actual API endpoint
@@ -25,6 +26,12 @@ function ListingDetailsOwnerView() {
     //     console.error('Error fetching listings:', error);
     //   });
     // Listing : {imageUrl, title, description}
+  }, []);
+
+  // setting Navbar
+  const { setOnDashboard } = useContext(NavContext);
+  useEffect(() => {
+    setOnDashboard(false);
   }, []);
 
   return (

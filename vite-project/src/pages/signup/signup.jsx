@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import {EnvelopeSimple} from "phosphor-react"
+import { useNavigate } from 'react-router-dom'
 
 import './signup.css'
 
@@ -10,7 +11,6 @@ export const SignUp = () => {
     const handleLogin = async(e) => {
         e.preventDefault();
         try {
-            setLoading(true);
             const response = await fetch('http://localhost:3000/login', {
                 method: 'POST',
                 headers: {
@@ -25,6 +25,10 @@ export const SignUp = () => {
         }
     };
 
+    // const navigate = useNavigate();
+    // const handleLogin = () => {
+    //     navigate('/dashboard')
+    // }
 
     return (
         <div className='container'>
