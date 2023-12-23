@@ -1,0 +1,14 @@
+.listing-details-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+.listing-details-container {
+    background-color: white;
+    padding:1rem;
+    flex-grow: 1;
+}
+/* 
+.listing-upload-details {
+    margin-bottom: 0rem;
+} */
