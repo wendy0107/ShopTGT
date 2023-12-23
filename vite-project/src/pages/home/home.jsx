@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Listing from "../../components/listing"; // Import the Listing component
 import Navbar from "../../components/navbar";
 import "./home.css";
+import { listingExamples } from "../../listing-examples";
+import { NavContext } from "../../components/navContext";
 // import axios from 'axios'; // Assuming you're using axios for API calls
 
 function Home() {
   const [listings, setListings] = useState([]);
+  const { setOnDashboard } = useContext(NavContext);
 
   useEffect(() => {
     // Fetch listings data from the API
@@ -17,56 +20,8 @@ function Home() {
     //     console.error('Error fetching listings:', error);
     //   });
     // Listing : {imageUrl, title, description}
-    setListings([
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-      {
-        imageUrl:
-          "https://images.squarespace-cdn.com/content/v1/60f1a490a90ed8713c41c36c/1629223610791-LCBJG5451DRKX4WOB4SP/37-design-powers-url-structure.jpeg",
-        title: "Test 1",
-        description: "Just a sample",
-      },
-    ]);
+    setOnDashboard(true);
+    setListings(listingExamples);
   }, []);
 
   return (
