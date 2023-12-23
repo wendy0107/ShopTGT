@@ -1,9 +1,8 @@
 import React, {useContext, useState} from "react"
 import {EnvelopeSimple} from "phosphor-react"
-import { Navigate, useHistory, Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom'
 import { UserContext } from "../../context/userContext";
-
-import './signup.css'
+import './signup.css' 
 
 export const SignUp = () => {
     const {userID, setUserID} = useContext(UserContext);
@@ -30,6 +29,10 @@ export const SignUp = () => {
         }
     };
 
+    // const navigate = useNavigate();
+    // const handleLogin = () => {
+    //     navigate('/dashboard')
+    // }
 
     return (
         <div className='container'>
