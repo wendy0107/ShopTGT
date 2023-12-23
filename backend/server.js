@@ -75,6 +75,26 @@ app.post('/listings/:user_id/create', async (req, res) => {
     }
 });
 
+app.post('/items/:listing_id', async (req, res) => {
+    const listing_id = req.params.listing_id
+    const { title, price, quantity, remaining_quantity } = req.body;
+
+    let { data, error } = await supabase.rpc('create_item', {
+    listing_id : listing_id, 
+    name : title, 
+    price: price, 
+    quantity : quantity, 
+    remaining_quantity : remaining_quantity
+});
+    if (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message });
+    } else {
+        console.log(data)
+        res.status(200).json({message: "Successfully created item", data})
+    }
+});
+
 app.post('/listings/:listing_id/delete', async (req, res) => {
     const listing_id = req.params.listing_id;
     console.log(listing_id)
