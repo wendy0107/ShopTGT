@@ -1,17 +1,19 @@
-import React, {useState} from "react"
+import React, {useContext, useState} from "react"
 import {EnvelopeSimple} from "phosphor-react"
+import { Navigate, useHistory, Link } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
 
 import './signup.css'
 
 export const SignUp = () => {
-
+    const {userID, setUserID} = useContext(UserContext);
     const [email, setEmail] = useState("");
+    // const history = useHistory();
 
     const handleLogin = async(e) => {
         e.preventDefault();
         try {
-            setLoading(true);
-            const response = await fetch('http://localhost:3000/login', {
+            const response = await fetch('http://localhost:3001/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -19,7 +21,10 @@ export const SignUp = () => {
                 body: JSON.stringify({ email }),
             });
             const data = await response.json();
-            console.log("User id", data);
+            // console.log(data);
+            setUserID(data);
+            console.log("User id", userID);
+            // history.push("/user/listing");
         } catch (error) {
             console.error("Error with backend:", error);
         }
