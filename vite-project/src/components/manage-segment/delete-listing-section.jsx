@@ -18,12 +18,23 @@ function DeleteListingSection({ listingId }) {
     handleClose();
   };
 
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "70%",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+  };
+
   return (
     <Accordion sx={{ backgroundColor: "#fce4e4", textAlign: "center" }}>
       <AccordionSummary expandIcon={<ExpandMore />} aria-controls="danger-zone">
-        <Typography variant="h6" sx={{fontSize: '1rem'}}>
+        <Typography variant="h6" sx={{ fontSize: "1rem" }}>
           <span style={{ fontWeight: "bold" }}>DANGER ZONE!</span> - Click to
-          delete listing 
+          delete listing
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
@@ -36,12 +47,12 @@ function DeleteListingSection({ listingId }) {
           aria-labelledby="delete-listing-modal-title"
           aria-describedby="delete-listing-modal-description"
         >
-          <Box sx={{ width: "500px" }}>
-            <Box sx={{ textAlign: "center" }}>
-              <h2 id="delete-listing-modal-title">Delete Listing</h2>
-              <p id="delete-listing-modal-description">
+          <Box sx={{ width: "500px", ...modalStyle }}>
+            <Box sx={{ textAlign: "left" }}>
+              <Typography variant="h4">Delete Listing</Typography>
+              <Typography variant="h6" sx={{m: '1rem 0 2rem 0'}}>
                 Are you sure you want to delete this listing?
-              </p>
+              </Typography>
             </Box>
             <Box
               sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}

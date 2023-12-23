@@ -19,6 +19,7 @@ function AlertModal({ open, onClose }) {
     gap: "1rem",
   };
 
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={{ ...style, width: "30vw" }}>
