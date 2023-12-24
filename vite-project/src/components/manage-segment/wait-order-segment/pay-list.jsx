@@ -18,8 +18,24 @@ function PayList({ orders, items }) {
   //     newPaidStatuses[orderIndex] = !event.target.value;
   //     setPaidStatuses(newPaidStatuses);
   //   };
-  const handlePaidStatusChange = (orderIndex) => (event) => {
-    // update paid status of order
+  const handlePaidStatusChange = (orderIndex) => async (event) => {
+    // update paid status
+    // console.log('checked', event.target.checked)
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${orders[orderIndex].listing_id}/${orders[orderIndex].buyer_id}/update-payment`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ payed: event.target.checked }),
+        }
+      );
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
   };
 
   return (
@@ -48,13 +64,13 @@ function PayList({ orders, items }) {
                 <TableCell align="right">
                   {/* Calculate Payable Amount Here */}
                   {/* Assuming items and orderQuantities are structured correctly */}
-                  {`$${order.orderQuantities
+                  {`$${order.finalised_quantities
                     .reduce((total, qty, i) => total + qty * items[i].price, 0)
                     .toFixed(2)}`}
                 </TableCell>
                 <TableCell align="right">
                   <Checkbox
-                    defaultChecked={order.paid}
+                    defaultChecked={order.has_payed}
                     onChange={handlePaidStatusChange(index)}
                   />
                 </TableCell>

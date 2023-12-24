@@ -2,10 +2,29 @@ import React from "react";
 import { Alert, Button, Typography } from "@mui/material";
 import OrderSummary from "./order-summary";
 
-function ViewSummarySegment({ listing, orderQuantities, setCurrentStage }) {
+function ViewSummarySegment({
+  listing,
+  orderQuantities,
+  setCurrentStage,
+  items,
+}) {
   const handleAmendOrder = () => {
     setCurrentStage((prevStage) => Math.max(prevStage - 1, 0));
     // no need to change remainingQty and orderQuantities here
+  };
+
+  const renderButton = () => {
+    return (
+      <Button
+        variant="contained"
+        onClick={handleAmendOrder}
+        color="error"
+        disabled={listing.status == "CLOSED"}
+        sx={{ fontSize: "1rem", fontWeight: "600", margin: "1.2rem 0" }}
+      >
+        Amend order
+      </Button>
+    );
   };
   return (
     <>
@@ -17,7 +36,11 @@ function ViewSummarySegment({ listing, orderQuantities, setCurrentStage }) {
       <Typography variant="h6" gutterBottom>
         Order Summary
       </Typography>
-      <OrderSummary items={listing.items} orderQuantities={orderQuantities} toDisplayAll={true}/>
+      <OrderSummary
+        items={items}
+        orderQuantities={orderQuantities}
+        toDisplayAll={true}
+      />
       <div
         style={{
           display: "flex",
@@ -25,15 +48,7 @@ function ViewSummarySegment({ listing, orderQuantities, setCurrentStage }) {
           alignItems: "center",
         }}
       >
-        <Button
-          variant="contained"
-          onClick={handleAmendOrder}
-          color="error"
-          disabled={listing.status == "CLOSED"}
-          sx={{ fontSize: "1rem", fontWeight: "600", margin: "1.2rem 0" }}
-        >
-          Amend order
-        </Button>
+        {renderButton()}
       </div>
     </>
   );

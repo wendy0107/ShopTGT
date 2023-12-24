@@ -6,7 +6,7 @@ function ProgressBarOwner({ currentStage }) {
     const stageToValueMap = {
       OPEN: 0,
       CLOSED: 1,
-      FINALIZED: 2,
+      FINALISED: 2,
       ARRIVED: 3,
     };
     return (

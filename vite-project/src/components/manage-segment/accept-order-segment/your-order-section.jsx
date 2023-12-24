@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { Modal, Button, Box } from "@mui/material";
@@ -9,13 +9,25 @@ import AlertModal from "../../order-segment/make-order-segment/alert-modal";
 
 function YourOrderSection({
   listing,
+  items,
   ownerOrderQuantities,
   setOwnerOrderQuantities,
+  userID,
 }) {
-  const hasOrders = ownerOrderQuantities.some((quantity) => quantity > 0);
-  const [isOwnerOrderAdded, setIsOwnerOrderAdded] = useState(hasOrders);
+  // const hasOrders = ownerOrderQuantities.some((quantity) => quantity > 0);
+  const [isOwnerOrderAdded, setIsOwnerOrderAdded] = useState(false);
   const [openMakeOrderModal, setOpenMakeOrderModal] = useState(false);
   const [openAlertModal, setOpenAlertModal] = useState(false);
+  // const [remainingQuantity, setRemainingQuantity] = useState([]);
+
+  // useEffect(() => {
+  //   setRemainingQuantity(items.map(item => item.remaining_quantity))
+  // }, [items])
+
+  useEffect(() => {
+    const hasOrders = ownerOrderQuantities.some((quantity) => quantity > 0);
+    setIsOwnerOrderAdded(hasOrders);
+  }, [ownerOrderQuantities]);
 
   const handleOpenMakeOrderModal = () => {
     setOpenMakeOrderModal(true);
@@ -25,11 +37,58 @@ function YourOrderSection({
     setOpenMakeOrderModal(false);
   };
 
-  const handleConfirmOrder = () => {
+  const handleConfirmOrder = async () => {
     // Handle order confirmation logic here (e.g., send to backend)
     handleCloseMakeOrderModal(); // Close the modal
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${listing.id}/${userID}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ item_quantities: ownerOrderQuantities }),
+        }
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        const response_1 = await fetch(
+          `http://localhost:3000/listings/${listing.id}/${userID}/finalise-order`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              finalised_quantities: ownerOrderQuantities,
+            }),
+          }
+        );
+        const data_1 = await response_1.json();
+      }
+
+      // for (let index in items) {
+      //   // console.log(ownerOrderQuantities[index])
+      //   const response_2 = await fetch(
+      //     `http://localhost:3000/items/${items[index].id}/update_remaining_quantity`,
+      //     {
+      //       method: "PUT",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //       body: JSON.stringify({ remaining_quantity:re[index]}),
+      //     }
+      //   );
+      //   const data_2 = await response_2.json();
+      // }
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
 
     const hasOrders = ownerOrderQuantities.some((quantity) => quantity > 0);
+    // console.log('(your-order-section) check owner order quantities', ownerOrderQuantities)
     if (!hasOrders) {
       setOpenAlertModal(true); // Trigger the modal if all quantities are 0
       setIsOwnerOrderAdded(false);
@@ -65,14 +124,14 @@ function YourOrderSection({
         >
           Your Orders
         </Typography>
-        <Tooltip title="Click here to add order">
+        <Tooltip title="Click here to add/edit order">
           <Button
             variant="contained"
             color="primary"
             size="small"
             onClick={handleOpenMakeOrderModal}
           >
-            +
+            Add/Edit
           </Button>
         </Tooltip>
       </div>
@@ -82,9 +141,12 @@ function YourOrderSection({
             Key in your order here
           </Typography>
           <OrderTable
-            items={listing.items}
+            listing={listing}
+            items={items}
+            buyerID={userID}
             orderQuantities={ownerOrderQuantities}
             setOrderQuantities={setOwnerOrderQuantities}
+            // setRemainingQuantity={setRemainingQuantity}
           />
           <div style={{ textAlign: "right", padding: "1rem" }}>
             <Button
@@ -106,7 +168,7 @@ function YourOrderSection({
       {isOwnerOrderAdded ? (
         <OrderCard
           buyerEmail={exampleOwner.email}
-          items={listing.items}
+          items={items}
           orderQuantities={ownerOrderQuantities}
         />
       ) : (

@@ -3,13 +3,29 @@ import { Typography } from "@mui/material";
 import OrderSummary from "../../order-segment/view-summary-segment/order-summary";
 
 function TotalOrderList({ items, orders }) {
-  const totalOrderQuantities = orders.reduce((acc, order) => {
-    const combinedQuantities = acc.map(
-      (qty, index) => qty + order.orderQuantities[index]
-    );
-    return combinedQuantities;
-  }, Array(orders[0].orderQuantities.length).fill(0)); // Initialize with zeros
-
+  const renderContent = () => {
+    if (orders && orders.length > 0) {
+      const totalOrderQuantities = orders.reduce((acc, order) => {
+        const combinedQuantities = acc.map(
+          (qty, index) => qty + order.item_quantities[index]
+        );
+        return combinedQuantities;
+      }, Array(orders[0].item_quantities.length).fill(0)); // Initialize with zeros
+      return (
+        <OrderSummary
+          items={items}
+          orderQuantities={totalOrderQuantities}
+          toDisplayAll={false}
+        />
+      );
+    } else {
+      return (
+        <Typography variant="body1" sx={{ marginTop: "2rem" }}>
+          No orders were made.
+        </Typography>
+      );
+    }
+  };
   return (
     <>
       <Typography
@@ -18,11 +34,7 @@ function TotalOrderList({ items, orders }) {
       >
         Total Order List
       </Typography>
-      <OrderSummary
-        items={items}
-        orderQuantities={totalOrderQuantities}
-        toDisplayAll={false}
-      />
+      {renderContent()}
     </>
   );
 }

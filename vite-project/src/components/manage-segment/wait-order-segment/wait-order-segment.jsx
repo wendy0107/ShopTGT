@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Accordion,
@@ -6,17 +6,25 @@ import {
   AccordionDetails,
   Alert,
   Button,
+  Divider,
 } from "@mui/material";
 import OthersOrderSection from "../accept-order-segment/others-order-section";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-function WaitOrderSegment({ listing, orders, setCurrentStage }) {
+function WaitOrderSegment({
+  listing,
+  ownerOrder,
+  otherOrders,
+  setCurrentStage,
+  items,
+}) {
   const handleUndoFinalize = () => {
     setCurrentStage("CLOSED");
   };
   const handleNotifyArrival = () => {
     setCurrentStage("ARRIVED");
   };
+
   return (
     <>
       <Typography variant="h6" sx={{ marginTop: "2rem" }}>
@@ -24,7 +32,8 @@ function WaitOrderSegment({ listing, orders, setCurrentStage }) {
       </Typography>
 
       <Alert severity="info" sx={{ margin: "1rem" }}>
-        Click on &quot;ORDER HAS ARRIVED&quot; button when you receive the order to notify the other buyers.
+        Click on &quot;ORDER HAS ARRIVED&quot; button when you receive the order
+        to notify the other buyers.
       </Alert>
 
       <div
@@ -52,8 +61,15 @@ function WaitOrderSegment({ listing, orders, setCurrentStage }) {
         </AccordionSummary>
         <AccordionDetails>
           <OthersOrderSection
-            orders={orders}
-            items={listing.items}
+            orders={ownerOrder}
+            items={items}
+            titleOverride={"Your order"}
+            showFinalOrder={true}
+          />
+          <Divider sx={{ margin: "1rem 0 1rem 0" }} />
+          <OthersOrderSection
+            orders={otherOrders}
+            items={items}
             showFinalOrder={true}
           />
         </AccordionDetails>

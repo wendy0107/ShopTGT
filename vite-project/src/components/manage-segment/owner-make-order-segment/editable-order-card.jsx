@@ -14,19 +14,37 @@ import {
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 
-function EditableOrderCard({ buyerEmail, items, orderQuantities }) {
+function EditableOrderCard({ buyerEmail, items, order }) {
+  const orderQuantities = order.finalised_quantities;
+
   const [editedQuantities, setEditedQuantities] = useState(orderQuantities);
 
-  const handleQuantityChange = (index, delta) => {
+  const handleQuantityChange = async (index, delta) => {
     // const newValue = Math.max(0, parseInt(event.target.value)); // Prevent negative values
     const newQuantities = [...editedQuantities];
     const newQuantity = Math.max(
       0,
-      Math.min(newQuantities[index] + delta, orderQuantities[index])
+      Math.min(newQuantities[index] + delta, order.item_quantities[index])
     );
     newQuantities[index] = newQuantity;
-    setEditedQuantities(newQuantities); 
-    // need to write the changes here
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/listings/${order.listing_id}/${order.buyer_id}/finalise-order`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ finalised_quantities: newQuantities }),
+        }
+      );
+      const data = await response.json();
+      console.log("update quantities (editable order card", data);
+      setEditedQuantities(newQuantities);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
   };
 
   return (
@@ -60,13 +78,13 @@ function EditableOrderCard({ buyerEmail, items, orderQuantities }) {
                       type="tel"
                       value={editedQuantities[index]}
                       min={0}
-                      max={orderQuantities[index]}
+                      max={order.item_quantities[index]}
                       sx={{ width: "25%" }}
                     />
                     <IconButton
                       onClick={() => handleQuantityChange(index, 1)}
                       disabled={
-                        editedQuantities[index] === orderQuantities[index]
+                        editedQuantities[index] === order.item_quantities[index]
                       }
                     >
                       <ArrowRightIcon />

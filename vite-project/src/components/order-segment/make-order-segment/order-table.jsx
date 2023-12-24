@@ -16,17 +16,12 @@ import {
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 
-function OrderTable({
-  items,
-  orderQuantities,
-  setOrderQuantities,
-}) {
-  
-  const handleQuantityChange = (index, delta) => {
+function OrderTable({ items, orderQuantities, setOrderQuantities }) {
+  const handleQuantityChange = async (index, delta) => {
     const newQuantities = [...orderQuantities];
     const newQuantity = Math.max(
       0,
-      Math.min(newQuantities[index] + delta, items[index].remaining_qty)
+      Math.min(newQuantities[index] + delta, items[index].remaining_quantity)
     );
     newQuantities[index] = newQuantity;
     setOrderQuantities(newQuantities);
@@ -45,7 +40,7 @@ function OrderTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item, index) => (
+            {items?.map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell sx={{ width: "5%" }}>{index + 1}</TableCell>
                 <TableCell sx={{ width: "60%" }}>{item.name}</TableCell>
@@ -61,13 +56,13 @@ function OrderTable({
                     type="tel"
                     value={orderQuantities[index]}
                     min={0}
-                    max={item.remaining_qty}
+                    max={item.remaining_quantity}
                     sx={{ width: "25%" }}
                     onChange={(e) => {
                       setOrderQuantities((prevQuantities) => {
                         return prevQuantities.map((qty, i) =>
                           i === index
-                            ? Math.min(e.target.value, item.remaining_qty)
+                            ? Math.min(e.target.value, item.remaining_quantity)
                             : qty
                         );
                       });
@@ -77,10 +72,12 @@ function OrderTable({
                     variant="body1"
                     color="textSecondary"
                     sx={{ display: "inline-block" }}
-                  >{`/${item.remaining_qty}`}</Typography>
+                  >{`/${item.remaining_quantity}`}</Typography>
                   <IconButton
                     onClick={() => handleQuantityChange(index, 1)}
-                    disabled={orderQuantities[index] === item.remaining_qty}
+                    disabled={
+                      orderQuantities[index] === item.remaining_quantity
+                    }
                   >
                     <ArrowRightIcon />
                   </IconButton>

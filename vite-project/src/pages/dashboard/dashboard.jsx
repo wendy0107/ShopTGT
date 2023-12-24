@@ -8,17 +8,58 @@ import { NavContext } from "../../context/navContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import CreateListingDialog from "../../components/create-listing-dialog";
+import { UserContext } from "../../context/userContext";
 
 function Dashboard({ ownerEmail }) {
+
+  const { userID } = useContext(UserContext);
+  const [ownerListings, setOwnerListings] = useState([]);
+  const [joinedListings, setJoinedListings] = useState([]);
+
+  // console.log('dashboard', userID)
+
   // Data loading
-  const getOwnerListings = () => {
-    return listingExamples;
+  const getOwnerListings = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/listings/${userID}/all-listings`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      setOwnerListings(data.listings);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
   };
-  const getJoinedListings = () => {
-    return listingExamples;
+
+  const getJoinedListings = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${userID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      setJoinedListings(data.listings);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
   };
-  const ownerListings = getOwnerListings();
-  const joinedListings = getJoinedListings();
+
+  // load listings
+  useEffect(() => {
+    getOwnerListings();
+    getJoinedListings();
+  }, []);
 
   // setting Navbar
   const { setOnDashboard } = useContext(NavContext);
@@ -100,7 +141,7 @@ function Dashboard({ ownerEmail }) {
             </Button>
           </ThemeProvider>
         </div>
-        <CreateListingDialog setOpen={setDialogOpen} open={dialogOpen} />
+        <CreateListingDialog setOpen={setDialogOpen} open={dialogOpen} getOwnerListings={getOwnerListings}/>
         {renderOwnerListings()}
         <Divider sx={{ margin: "2rem" }} />
         <Typography variant="h6" sx={{ mb: "1rem", fontWeight: "bold" }}>
