@@ -123,6 +123,26 @@ app.post('/listings/:listing_id/update-status', async (req, res) => {
     }
 });
 
+app.put('/listings/:listing_id/:user_id/order', async (req, res) => {
+    const listing_id = req.params.listing_id;
+    const user_id = req.params.user_id;
+    const item_quantities = req.body.item_quantities;
+
+    let { data, error } = await supabase.rpc('update_item_quantities', {
+        new_item_quantities: item_quantities,
+        order_buyer_id: user_id,
+        order_listing_id: listing_id
+    })
+
+    if (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message })
+    } else {
+        console.log("Updated item_quantities", data)
+        res.status(200).json({message: "Successfully updated order", data})
+    }
+});
+
 app.post('/orders/:listing_id/:user_id', async (req, res) => {
     const listing_id = req.params.listing_id;
     const user_id = req.params.user_id;

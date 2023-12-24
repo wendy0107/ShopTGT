@@ -1,80 +1,131 @@
 import React, { useState, useRef, useEffect } from "react";
 import ProgressBarOwner from "./progress-bar-owner";
 import { Divider, Typography } from "@mui/material";
-import { listingDetails, orderDetailsArr } from "../../listing-examples";
 import AcceptOrderSegment from "./accept-order-segment/accept-order-segment";
 import OwnerMakeOrderSegment from "./owner-make-order-segment/owner-make-order-segment";
 import WaitOrderSegment from "./wait-order-segment/wait-order-segment";
 import OrderArrivedSegment from "./order-arrived-segment/order-arrived-segment";
 import DeleteListingSection from "./delete-listing-section";
 
-function ManageSegment() {
-  // References (variables you want to persist but don't want them to rerender the page)
-  const listing = useRef();
-  listing.current = listingDetails; // STUB we constantly fetch new listing value every time so that rem qty refreshes
-
-  const orders = useRef();
-  orders.current = orderDetailsArr; // STUB
-
+function ManageSegment({ listing, items, userID }) {
   // States
   const [currentStage, setCurrentStage] = useState("OPEN");
-  const [ownerOrderQuantities, setOwnerOrderQuantities] = useState(
-    listing.current.items.map((item) => 0)
-  );
+  const [ownerOrder, setOwnerOrder] = useState([]);
+  const [otherOrders, setOtherOrders] = useState([]);
 
-  // Update state for the first time
+  // Update current stage upon loading page
   useEffect(() => {
-    const hasOrders = listing.current.ownerOrderQuantities.some(
-      (quantity) => quantity > 0
-    );
-    setCurrentStage(listing.current.status);
-    if (hasOrders) {
-      setOwnerOrderQuantities(listing.current.ownerOrderQuantities);
+    setCurrentStage(listing.status);
+  }, [listing]);
+
+  const getOwnerOrder = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${listing.id}/${userID}/owner`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("owner order", data);
+      setOwnerOrder(data.order);
+    } catch (error) {
+      console.error("Error with backend:", error);
     }
-  }, []);
+  };
+
+  const getOtherOrders = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${listing.id}/buyers`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      // console.log('other order', data)
+      setOtherOrders(data.orders);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
+  };
+
+  // Get latest order for everyone every time the status changes 
+  useEffect(() => {
+    getOwnerOrder();
+    getOtherOrders();
+  }, [currentStage]);
+
+  // Wrap setCurrentStage in function that updates listing status
+  const updateListingStatus = async (status) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/listings/${listing.id}/update-status`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+      const data = await response.json();
+      // console.log('update status', data)
+      setCurrentStage(status);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
+  };
+
   const renderContent = () => {
     switch (currentStage) {
       case "OPEN":
         return (
           <AcceptOrderSegment
-            listing={listing.current}
-            orders={orders.current}
-            ownerOrderQuantities={ownerOrderQuantities}
-            setOwnerOrderQuantities={setOwnerOrderQuantities}
-            setCurrentStage={setCurrentStage}
+            listing={listing}
+            ownerOrder={ownerOrder}
+            otherOrders={otherOrders}
+            items={items}
+            setCurrentStage={updateListingStatus}
           />
         );
         break;
       case "CLOSED":
         return (
           <OwnerMakeOrderSegment
-            listing={listing.current}
-            orders={orders.current}
-            ownerOrderQuantities={ownerOrderQuantities}
-            setOwnerOrderQuantities={setOwnerOrderQuantities}
-            setCurrentStage={setCurrentStage}
+            listing={listing}
+            ownerOrder={ownerOrder}
+            otherOrders={otherOrders}
+            items={items}
+            setCurrentStage={updateListingStatus}
           />
         );
         break;
-      case "FINALIZED":
+      case "FINALISED":
         return (
           <WaitOrderSegment
-            listing={listing.current}
-            orders={orders.current}
-            ownerOrderQuantities={ownerOrderQuantities}
-            setOwnerOrderQuantities={setOwnerOrderQuantities}
-            setCurrentStage={setCurrentStage}
+            listing={listing}
+            ownerOrder={ownerOrder}
+            otherOrders={otherOrders}
+            items={items}
+            setCurrentStage={updateListingStatus}
           />
         );
         break;
       case "ARRIVED":
         return (
           <OrderArrivedSegment
-            listing={listing.current}
-            orders={orders.current}
-            ownerOrderQuantities={ownerOrderQuantities}
-            setOwnerOrderQuantities={setOwnerOrderQuantities}
-            setCurrentStage={setCurrentStage}
+            listing={listing}
+            items={items}
+            ownerOrder={ownerOrder}
+            otherOrders={otherOrders}
+            setCurrentStage={updateListingStatus}
           />
         );
         break;
@@ -82,6 +133,7 @@ function ManageSegment() {
         break;
     }
   };
+
   return (
     <>
       <Typography variant="h6" sx={{ fontWeight: "600" }} gutterBottom>
@@ -89,7 +141,7 @@ function ManageSegment() {
       </Typography>
       <ProgressBarOwner currentStage={currentStage} />
       {renderContent()}
-      <Divider sx={{margin:"2rem"}}/>
+      <Divider sx={{ margin: "2rem" }} />
       <DeleteListingSection listingId={listing.id} />
     </>
   );

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import Dialog from "@mui/material/Dialog";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -11,11 +10,11 @@ import {
   Typography,
   Divider,
   Alert,
-  Input,
 } from "@mui/material";
+import { UserContext } from "../context/userContext";
 
-function CreateListingDialog({ open, setOpen }) {
-  const [formData, setFormData] = useState({
+function CreateListingDialog({ open, setOpen, getOwnerListings }) {
+  const formData = {
     title: "",
     description: "",
     collectionPoint: "",
@@ -26,45 +25,59 @@ function CreateListingDialog({ open, setOpen }) {
       { name: "", price: "", quantityAvailable: "" },
       { name: "", price: "", quantityAvailable: "" },
     ],
-  });
+  };
 
-  const handleCloseDialog = () => setOpen(false);
+  // get user id
+  const { userID } = useContext(UserContext);
+
+  // handlers
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
 
   const handleCancel = (event) => {
     setOpen(false);
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setOpen(false);
 
-    const form = document.querySelector("#create-listing-form");
-    const formData = new FormData(form);
+    const [listing_data, items_data] = preprocess_listing_and_items();
 
-    const body = {};
-    for (const pair of formData.entries()) {
-      body[pair[0]] = pair[1];
-      console.log("key: %s", String(pair[0]));
-      console.log("value: %s", String(pair[1]));
+    try {
+      const response_create_listing = await fetch(
+        `http://localhost:3000/listings/${userID}/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...listing_data }),
+        }
+      );
+      const listing_id = await response_create_listing.json();
+      // console.log(data);
+
+      for (const item of items_data) {
+        if (allValuesAreNonEmpty(item)) {
+          const response_create_item = await fetch(
+            `http://localhost:3000/items/${listing_id}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ ...item }),
+            }
+          );
+        }
+      }
+
+      // reload listing on dashboard
+      getOwnerListings();
+    } catch (error) {
+      console.error("Error with backend:", error);
     }
-
-    // // Send API request to create listing
-    // try {
-    //   const response = await fetch("/api/listings", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(formData),
-    //   });
-
-    //   if (response.ok) {
-    //     handleClose();
-    //     // Handle successful creation (e.g., display success message)
-    //   } else {
-    //     // Handle error
-    //   }
-    // } catch (error) {
-    //   // Handle network error
-    // }
   };
 
   const [priceValidities, setPriceValidities] = useState([
@@ -79,6 +92,45 @@ function CreateListingDialog({ open, setOpen }) {
     const newValidities = [...priceValidities];
     newValidities[index] = /^\d+(\.\d{1,2})?$/.test(event.target.value);
     setPriceValidities(newValidities);
+  };
+
+  // helper
+  // process and create listing
+  const allValuesAreNonEmpty = (obj) => {
+    return Object.values(obj).every((value) => {
+      return value && value.trim() !== ""; // Check for both empty string and undefined/null
+    });
+  };
+  const preprocess_listing_and_items = () => {
+    const form = document.querySelector("#create-listing-form");
+    const formData = new FormData(form);
+    const formDataEntries = formData.entries();
+
+    const listing_data = {};
+    const items_data = [];
+    let item_data = {};
+
+    let isItemData = false;
+    for (let [key, value] of formDataEntries) {
+      if (key == "item_title") {
+        isItemData = true;
+        key = "title";
+      }
+
+      if (!isItemData) {
+        listing_data[key] = value;
+        console.log();
+      } else {
+        item_data[key] = value;
+      }
+
+      if (key == "quantity") {
+        item_data["remaining_quantity"] = value;
+        items_data.push(item_data);
+        item_data = {};
+      }
+    }
+    return [listing_data, items_data];
   };
 
   return (
@@ -115,7 +167,7 @@ function CreateListingDialog({ open, setOpen }) {
           <Typography variant="h5">Items</Typography>
           <Alert severity="info">
             Quantity for items can include the quantity you are ordering for
-            yourself!{" "}
+            yourself!
           </Alert>
           <Grid container spacing={2}>
             {formData.items.map((item, index) => (
@@ -125,7 +177,7 @@ function CreateListingDialog({ open, setOpen }) {
                 </h4>
                 <TextField
                   label="Name"
-                  name={`name`}
+                  name={`item_title`}
                   fullWidth
                   required={index === 0} // Only require first item
                 />
@@ -152,7 +204,7 @@ function CreateListingDialog({ open, setOpen }) {
                 <TextField
                   label="Quantity Available"
                   type="number"
-                  name={`remaining_quantity`}
+                  name={`quantity`}
                   margin="normal"
                   fullWidth
                   InputProps={{ inputProps: { min: 1, max: 9999 } }}

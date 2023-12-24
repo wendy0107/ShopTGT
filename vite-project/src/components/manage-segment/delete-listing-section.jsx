@@ -7,15 +7,33 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useNavigate } from "react-router-dom";
 
 function DeleteListingSection({ listingId }) {
   const [open, setOpen] = useState(false);
+  const navi = useNavigate();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     // Handle API call to delete listing
-    handleClose();
+    try {
+      const response = await fetch(
+        `http://localhost:3000/listings/${listingId}/delete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("delete listing", data);
+      handleClose();
+      navi("/dashboard");
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
   };
 
   const modalStyle = {
@@ -50,7 +68,7 @@ function DeleteListingSection({ listingId }) {
           <Box sx={{ width: "500px", ...modalStyle }}>
             <Box sx={{ textAlign: "left" }}>
               <Typography variant="h4">Delete Listing</Typography>
-              <Typography variant="h6" sx={{m: '1rem 0 2rem 0'}}>
+              <Typography variant="h6" sx={{ m: "1rem 0 2rem 0" }}>
                 Are you sure you want to delete this listing?
               </Typography>
             </Box>

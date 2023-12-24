@@ -1,19 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Button,
+  Divider,
 } from "@mui/material";
 import OthersOrderSection from "../accept-order-segment/others-order-section";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PayList from "../wait-order-segment/pay-list";
 
-function OrderArrivedSegment({ listing, orders, setCurrentStage }) {
-  const handleUndoArrival = () => {
-    setCurrentStage("FINALIZED");
+function OrderArrivedSegment({
+  listing,
+  items,
+  ownerOrder,
+  otherOrders,
+  setCurrentStage,
+}) {
+    const handleUndoArrival = () => {
+    setCurrentStage("FINALISED");
   };
+
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    setOrders([...ownerOrder, ...otherOrders]);
+  }, [ownerOrder, otherOrders]);
 
   return (
     <>
@@ -21,7 +34,7 @@ function OrderArrivedSegment({ listing, orders, setCurrentStage }) {
         We have informed the other buyers about the arrival!
       </Typography>
 
-      <PayList orders={orders} items={listing.items} />
+      <PayList orders={orders} items={items} />
 
       <div style={{ textAlign: "left", margin: "2rem 0 2rem" }}>
         <Button
@@ -39,8 +52,15 @@ function OrderArrivedSegment({ listing, orders, setCurrentStage }) {
         </AccordionSummary>
         <AccordionDetails>
           <OthersOrderSection
-            orders={orders}
-            items={listing.items}
+            orders={ownerOrder}
+            items={items}
+            titleOverride={"Your order"}
+            showFinalOrder={true}
+          />
+          <Divider sx={{ margin: "1rem 0 1rem 0" }} />
+          <OthersOrderSection
+            orders={otherOrders}
+            items={items}
             showFinalOrder={true}
           />
         </AccordionDetails>
