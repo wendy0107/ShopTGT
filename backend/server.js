@@ -270,8 +270,7 @@ app.put('/orders/:listing_id/:user_id/update-payment', async (req, res) => {
 
 app.put('/items/:item_id/update_remaining_quantity', async (req, res) => {
     const item_id = req.params.item_id
-    const remaining_quantity = req.body
-
+    const remaining_quantity = req.body.remaining_quantity
     let { data, error } = await supabase.rpc('update_remaining_quantities', {
         item_id: item_id, 
         remaining_quantities_input: remaining_quantity
