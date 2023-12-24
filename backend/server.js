@@ -52,12 +52,13 @@ function filterListingsAndUsers(data) {
     const userIDs = new Set()
 
     users.forEach((user) => {
-        const userID = user.user_id
+        // const userID = user.user_id
 
-        if (!userIDs.has(userID)) {
-            uniqueUsers.push(user)
-            userIDs.add(userID)
-        }
+        // if (!userIDs.has(userID)) {
+            // uniqueUsers.push(user)
+            // userIDs.add(userID)
+        uniqueUsers.add(user.user_id)
+        // }
     })
 
     return { listings, owners: uniqueUsers };
@@ -92,15 +93,18 @@ function filterOrdersAndBuyers(data) {
     const userIDs = new Set()
 
     users.forEach((user) => {
-        const userID = user.buyer_id
+        uniqueUsers.push(user.buyer_id)
+        // const userID = user.buyer_id
 
-        if (!userIDs.has(userID)) {
-            uniqueUsers.push(user)
-            userIDs.add(userID)
-        }
+        // if (!userIDs.has(userID)) {
+        //     uniqueUsers.push(user)
+        //     userIDs.add(userID)
+        // }
     })
 
+    // return { orders: listings, buyers: uniqueUsers };
     return { orders: listings, buyers: uniqueUsers };
+
 }
 app.get('/', (req, res) => {
   res.send('Hello, this is your backend!');
