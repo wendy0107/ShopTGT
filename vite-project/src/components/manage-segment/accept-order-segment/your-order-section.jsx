@@ -18,6 +18,11 @@ function YourOrderSection({
   const [isOwnerOrderAdded, setIsOwnerOrderAdded] = useState(false);
   const [openMakeOrderModal, setOpenMakeOrderModal] = useState(false);
   const [openAlertModal, setOpenAlertModal] = useState(false);
+  // const [remainingQuantity, setRemainingQuantity] = useState([]);
+
+  // useEffect(() => {
+  //   setRemainingQuantity(items.map(item => item.remaining_quantity))
+  // }, [items])
 
   useEffect(() => {
     const hasOrders = ownerOrderQuantities.some((quantity) => quantity > 0);
@@ -63,6 +68,21 @@ function YourOrderSection({
         );
         const data_1 = await response_1.json();
       }
+
+      // for (let index in items) {
+      //   // console.log(ownerOrderQuantities[index])
+      //   const response_2 = await fetch(
+      //     `http://localhost:3000/items/${items[index].id}/update_remaining_quantity`,
+      //     {
+      //       method: "PUT",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //       body: JSON.stringify({ remaining_quantity:re[index]}),
+      //     }
+      //   );
+      //   const data_2 = await response_2.json();
+      // }
     } catch (error) {
       console.error("Error with backend:", error);
     }
@@ -126,6 +146,7 @@ function YourOrderSection({
             buyerID={userID}
             orderQuantities={ownerOrderQuantities}
             setOrderQuantities={setOwnerOrderQuantities}
+            // setRemainingQuantity={setRemainingQuantity}
           />
           <div style={{ textAlign: "right", padding: "1rem" }}>
             <Button

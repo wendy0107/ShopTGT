@@ -13,8 +13,8 @@ function ContactCard({ userDetails }) {
         }}
       />
       <CardContent>
-        <Typography variant="body1">{userDetails?.email}</Typography>
-        <Typography variant="body1">{userDetails?.phone}</Typography>
+        <Typography variant="body1">Email: {userDetails?.email}</Typography>
+        <Typography variant="body1">Phone: {userDetails?.phone}</Typography>
       </CardContent>
     </Card>
   );

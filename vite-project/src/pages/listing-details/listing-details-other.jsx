@@ -36,6 +36,7 @@ function ListingDetailsOther({ listing, items, userID, ownerDetails }) {
       const data = await response.json();
       // console.log('listing-details-other get order', data)
       setOrderDetails(data.order[0]);
+      
     } catch (error) {
       console.error("Error with backend:", error);
     }
