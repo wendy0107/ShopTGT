@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - web
+    networks: 
+      - shop_net
+
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    depends_on:
+      - backend
+    networks:
+      - shop_net
+    
+networks:
+    shop_net:
