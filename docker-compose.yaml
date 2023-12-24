@@ -7,14 +7,12 @@ services:
       dockerfile: Dockerfile
     ports: 
       - "3000:3000"
-    depends_on:
-      - web
     networks: 
       - shop_net
 
   web:
     build:
-      context: ./backend
+      context: ./vite-project
       dockerfile: Dockerfile
     ports:
       - "9000:9000"

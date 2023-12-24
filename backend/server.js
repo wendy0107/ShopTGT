@@ -154,6 +154,21 @@ app.post('/orders/:listing_id/:user_id', async (req, res) => {
     }
 });
 
+app.post('/orders/:listing_id/:user_id/delete', async (req, res) => {
+    const listing_id = req.params.listing_id;
+    const user_id = req.params.user_id;
+
+    let { error } = await supabase.from('orders').delete().eq('listing_id', listing_id).eq('buyer_id', user_id)
+
+    if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message });
+    } else {
+        console.log("Deleted order")
+        res.status(200).json({message: "Successfully deleted order"})
+    }
+});
+
 app.put('/listings/:listing_id/:user_id/finalise-order', async (req, res) => {
     const listing_id = req.params.listing_id;
     const user_id = req.params.user_id;
