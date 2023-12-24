@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { createClient } = require('@supabase/supabase-js');
+const {v4: uuidv4} = require('uuid');
 
 const app = express();
 const port = 3000;
@@ -247,6 +248,24 @@ app.put('/orders/:listing_id/:user_id/update-payment', async (req, res) => {
     }
 });
 
+app.put('/items/:item_id/update_remaining_quantity', async (req, res) => {
+    const item_id = req.params.item_id
+    const remaining_quantity = req.body
+
+    let { data, error } = await supabase.rpc('update_remaining_quantities', {
+        item_id: item_id, 
+        remaining_quantities_input: remaining_quantity
+    })
+
+    if (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message })
+    } else {
+        console.log(data)
+        res.status(200).json({message: "Successfully updated remaining quantity", remaining_quantity})
+    }
+});
+
 app.get('/listings/:user_id/all-listings', async (req, res) => {
     // get all listings created by user
     const user_id = req.params.user_id
@@ -364,6 +383,48 @@ app.get('/user/:user_id', async (req, res) => {
     } else {
         console.log("Retrieved %s's details", user_id)
         res.status(200).json({user_details: data})
+    }
+});
+
+app.post('/listings/:listing_id/upload-image', async (req, res) => {
+    const listing_id = req.params.listing_id
+    const newUUID = uuidv4()
+    const file = req.body
+
+    const { data, error } = await supabase.storage.from('images').upload(listing_id + "/" + newUUID, file)
+
+    if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message })
+    } else {
+        console.log(data)
+        res.status(200).json("done");
+    }
+});
+
+app.post('/listings/:listing_id/get-image-urls', async (req, res) => {
+    const listing_id = req.params.listing_id
+    const newUUID = uuidv4()
+    const file = req.body
+    const CDN = "https://ebdhnbzfjvzhdxashhrw.supabase.co/storage/v1/object/sign/images/"
+    const { data, error } = await supabase.storage.from('images').list(listing_id + "/", {sortBy: {column: "name", order: "asc"}});
+
+    // data is an array of all the images
+    // each image is a key value pair name and name of image
+    // CDN: https://ebdhnbzfjvzhdxashhrw.supabase.co/storage/v1/object/sign/images/
+    // image url header CDN + listing_id
+
+    if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message })
+    } else {
+        const image_urls = []
+        for (const image in data) {
+            const image_url = CDN + image.name
+            image_urls.push(image_url)
+        }
+        console.log(image_urls)
+        res.status(200).json({image_urls : image_urls});
     }
 });
 
