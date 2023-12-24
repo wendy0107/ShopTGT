@@ -23,6 +23,85 @@ function getCurrentTimestamp() {
     return formattedTimestamp
 }
 
+function filterListingsAndUsers(data) {
+    const listings = [];
+    const users = [];
+    console.log(data)
+    // console.log(data.listings)
+
+    // Iterate through the listings array
+    data.forEach((listing) => {
+        const listingData = {};
+        const userData = {};
+
+        // Iterate through the key-value pairs of each listing
+        for (const [key, value] of Object.entries(listing)) {
+            // Check if the key starts with "user_"
+            if (key.startsWith('user_')) {
+                userData[key] = value;
+            } else {
+                listingData[key] = value;
+            }
+        }
+
+        listings.push(listingData);
+        users.push(userData);
+    });
+
+    const uniqueUsers = []
+    const userIDs = new Set()
+
+    users.forEach((user) => {
+        const userID = user.user_id
+
+        if (!userIDs.has(userID)) {
+            uniqueUsers.push(user)
+            userIDs.add(userID)
+        }
+    })
+
+    return { listings, owners: uniqueUsers };
+}
+
+function filterOrdersAndBuyers(data) {
+    const listings = [];
+    const users = [];
+    console.log(data)
+    // console.log(data.listings)
+
+    // Iterate through the listings array
+    data.forEach((listing) => {
+        const listingData = {};
+        const userData = {};
+
+        // Iterate through the key-value pairs of each listing
+        for (const [key, value] of Object.entries(listing)) {
+            // Check if the key starts with "user_"
+            if (key.startsWith('buyer_')) {
+                userData[key] = value;
+            } else {
+                listingData[key] = value;
+            }
+        }
+
+        listings.push(listingData);
+        users.push(userData);
+    });
+
+    const uniqueUsers = []
+    const userIDs = new Set()
+
+    users.forEach((user) => {
+        const userID = user.buyer_id
+
+        if (!userIDs.has(userID)) {
+            uniqueUsers.push(user)
+            userIDs.add(userID)
+        }
+    })
+
+    return { orders: listings, buyers: uniqueUsers };
+}
 app.get('/', (req, res) => {
   res.send('Hello, this is your backend!');
 });
@@ -339,6 +418,45 @@ app.get('/orders/:user_id', async (req, res) => {
     }
 });
 
+
+
+app.get('/orders/:listing_id/buyers-details', async (req, res) => {
+    const listing_id = req.params.listing_id
+
+    let { data, error } = await supabase.rpc('get_buyers_details_orders_for_listing', {
+        listing_id_input: listing_id
+    })
+  
+    // console.log(data)
+    if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message })
+    } else {
+        console.log("Retrieved listing's buyers' orders only and buyer details")
+        res.status(200).json(filterOrdersAndBuyers(data))
+    }
+})
+
+app.get('/orders/:user_id/listing_owner', async (req, res) => {
+    // get all listings a user joined
+    const user_id = req.params.user_id
+    
+    let { data, error } = await supabase.rpc('get_listings_and_owner_joined_by_user', {user_id_input:user_id})
+
+    // console.log(data)
+    if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error', message: error.message })
+    } else {
+        // console.log(data)
+
+        console.log(filterListingsAndUsers(data))
+
+        console.log("Retrieved listings joined and listings' owner's detials")
+        res.status(200).json(filterListingsAndUsers(data))
+    }
+});
+
 app.get('/orders/:listing_id/:user_id/owner', async (req, res) => {
     // get orders made by the owner
     const listing_id = req.params.listing_id
@@ -406,47 +524,54 @@ app.get('/user/:user_id', async (req, res) => {
     }
 });
 
-app.post('/listings/:listing_id/upload-image', async (req, res) => {
-    const listing_id = req.params.listing_id
-    const newUUID = uuidv4()
-    const file = req.body
+// app.post('/listings/:listing_id/upload-image', async (req, res) => {
+//     const listing_id = req.params.listing_id
+//     const newUUID = uuidv4()
+//     const file = req.body
 
-    const { data, error } = await supabase.storage.from('images').upload(listing_id + "/" + newUUID, file)
+//     const { data, error } = await supabase.storage.from('images').upload(listing_id + "/" + newUUID, file)
 
-    if (error) {
-        console.log(error)
-        res.status(500).json({ error: 'Internal Server Error', message: error.message })
-    } else {
-        console.log(data)
-        res.status(200).json("done");
-    }
-});
+//     if (error) {
+//         console.log(error)
+//         res.status(500).json({ error: 'Internal Server Error', message: error.message })
+//     } else {
+//         console.log(data)
+//         res.status(200).json("done");
+//     }
+// });
 
-app.post('/listings/:listing_id/get-image-urls', async (req, res) => {
-    const listing_id = req.params.listing_id
-    const newUUID = uuidv4()
-    const file = req.body
-    const CDN = "https://ebdhnbzfjvzhdxashhrw.supabase.co/storage/v1/object/sign/images/"
-    const { data, error } = await supabase.storage.from('images').list(listing_id + "/", {sortBy: {column: "name", order: "asc"}});
+// app.get('/listings/:listing_id/get-image-urls', async (req, res) => {
+//     const listing_id = req.params.listing_id
+//     const CDN = "https://ebdhnbzfjvzhdxashhrw.supabase.co/storage/v1/object/public/images/"
 
-    // data is an array of all the images
-    // each image is a key value pair name and name of image
-    // CDN: https://ebdhnbzfjvzhdxashhrw.supabase.co/storage/v1/object/sign/images/
-    // image url header CDN + listing_id
+//     const { data, error } = await supabase.storage.from('images').list(listing_id + "/", {sortBy: {column: "name", order: "asc"}});
 
-    if (error) {
-        console.log(error)
-        res.status(500).json({ error: 'Internal Server Error', message: error.message })
-    } else {
-        const image_urls = []
-        for (const image in data) {
-            const image_url = CDN + image.name
-            image_urls.push(image_url)
-        }
-        console.log(image_urls)
-        res.status(200).json({image_urls : image_urls});
-    }
-});
+//     // data is an array of all the images
+//     // each image is a key value pair name and name of image
+//     // CDN: https://ebdhnbzfjvzhdxashhrw.supabase.co/storage/v1/object/sign/images/
+//     // image url header CDN + listing_id
+//     if (error) {
+//         console.log(error)
+//         res.status(500).json({ error: 'Internal Server Error', message: error.message })
+//     } else {
+
+//         console.log(data)
+//         const image_urls = []
+//         const download_urls = []
+
+//         for (const image in data) {
+//             console.log(image)
+//             const image_name = data[image].name.replace(/ /g, '%')
+//             const image_url = CDN + image_name
+//             const {download_url} = supabase.storage.from('images').getPublicUrl(listing_id + image_name, {download: true,})
+//             download_urls.push(download_url)
+//             image_urls.push(image_url)
+//         }
+//         console.log(image_urls)
+//         console.log(download_urls)
+//         res.status(200).json({image_urls : image_urls});
+//     }
+// });
 
 app.listen(port, () => {
     console.log(`Server is running at this link http://localhost:${port}`);
