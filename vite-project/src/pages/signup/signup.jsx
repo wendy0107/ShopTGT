@@ -20,7 +20,7 @@ export const SignUp = ({ lastPath }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://47.128.228.140:3000/login", {
+      const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export const SignUp = ({ lastPath }) => {
         setUserEmail(email);
         setUserID(data);
       }
-      console.log("User id", userID);
+      // console.log("User id", userID);
     } catch (error) {
       console.error("Error with backend:", error);
     }

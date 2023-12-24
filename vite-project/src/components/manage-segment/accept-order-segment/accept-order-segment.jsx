@@ -6,7 +6,7 @@ import { Button, Divider } from "@mui/material";
 function AcceptOrderSegment({
   listing,
   ownerOrder,
-  otherOrder,
+  otherOrders,
   items,
   // ownerOrderQuantities,
   // setOwnerOrderQuantities,
@@ -40,7 +40,7 @@ function AcceptOrderSegment({
       />
       <Divider sx={{ margin: "2rem" }} />
       <OthersOrderSection
-        orders={otherOrder}
+        orders={otherOrders}
         items={items}
         showFinalOrder={false}
       />

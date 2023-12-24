@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OrderSummary from "../view-summary-segment/order-summary";
 import {
   Accordion,
@@ -9,15 +9,40 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-function CheckFinalSegment({ listing, orderQuantities, orderDetails }) {
-  //   const [open, setOpen] = useState(false);
+function CheckFinalSegment({ listing, items, userID }) {
 
-  //   const handleOpen = () => setOpen(true);
+  const [orderDetails, setOrderDetails] = useState(null)
+
+  // try to retrieve existing order
+  const retrieveExistingOrder = async () => {
+    // console.log('listing id', listing.id)
+    // console.log('user ID', userID)
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${listing.id}/${userID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log('check final', data)
+      setOrderDetails(data.order[0]);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
+  };
+
+  useEffect(() => {
+    retrieveExistingOrder();
+  }, [listing]);
 
   return (
     <>
       <Typography variant="h6" sx={{ marginTop: "2rem" }}>
-        The owner has made the order! Kindly wait for the order to arrive :> 
+        The owner has made the order! Kindly wait for the order to arrive :>
       </Typography>
 
       <Alert severity="warning" sx={{ mt: 5 }} sx={{ margin: "1rem" }}>
@@ -25,8 +50,8 @@ function CheckFinalSegment({ listing, orderQuantities, orderDetails }) {
       </Alert>
 
       <OrderSummary
-        items={listing.items}
-        orderQuantities={orderDetails.finalQuantities}
+        items={items}
+        orderQuantities={orderDetails?.finalised_quantities}
         toDisplayAll={false}
       />
 
@@ -38,8 +63,8 @@ function CheckFinalSegment({ listing, orderQuantities, orderDetails }) {
         </AccordionSummary>
         <AccordionDetails>
           <OrderSummary
-            items={listing.items}
-            orderQuantities={orderQuantities}
+            items={items}
+            orderQuantities={orderDetails?.item_quantities}
             toDisplayAll={true}
           />
         </AccordionDetails>

@@ -40,7 +40,7 @@ function OrderTable({ items, orderQuantities, setOrderQuantities }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item, index) => (
+            {items?.map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell sx={{ width: "5%" }}>{index + 1}</TableCell>
                 <TableCell sx={{ width: "60%" }}>{item.name}</TableCell>

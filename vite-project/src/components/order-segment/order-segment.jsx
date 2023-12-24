@@ -8,30 +8,26 @@ import ViewSummarySegment from "./view-summary-segment/view-summary-segment";
 import CheckFinalSegment from "./check-final-segment/check-final-segment";
 import CollectOrderSegment from "./collect-order-segment/collect-order-segment";
 
-function OrderSegment({ orderDetails }) {
-  // References
-  const listing = useRef(); // useRef instead of useState because we dont want a change in remainingQty (when we update it later) to rerender this component
-  listing.current = listingDetails; // STUB USED
-
+function OrderSegment({ orderDetails, items, listing, userID }) {
   // States
   const [currentStage, setCurrentStage] = useState(0); // Start at the first stage
   const [orderQuantities, setOrderQuantities] = useState(
-    listing.current.items.map((item) => 0)
+    items?.map((item) => 0)
   );
 
   // update current stage based on status of listing
   useEffect(() => {
-    const hasOrders = orderDetails.orderQuantities.some(
+    const hasOrders = orderDetails?.item_quantities?.some(
       (quantity) => quantity > 0
     );
 
     // No matter OPEN or CLOSED, as long as an order is made, we go to stage 1.
     // If no order is made, it is okay to be in Stage 0, but NOT Stage 1 or 2. We will disable the order segment with Stage -1.
-    if (orderDetails.orderQuantities && hasOrders) {
-      setOrderQuantities(orderDetails.orderQuantities);
+    if (orderDetails?.item_quantities && hasOrders) {
+      setOrderQuantities(orderDetails.item_quantities);
       setCurrentStage(1);
-      switch (listing.current.status) {
-        case "FINALIZED":
+      switch (listing.status) {
+        case "FINALISED":
           setCurrentStage(2);
           break;
         case "ARRIVED":
@@ -39,18 +35,19 @@ function OrderSegment({ orderDetails }) {
           break;
       }
     } else {
-      switch (listing.current.status) {
+      setOrderQuantities(items?.map((item) => 0));
+      switch (listing.status) {
         case "CLOSED":
           setCurrentStage(-1);
           break;
-        case "FINALIZED":
+        case "FINALISED":
           setCurrentStage(-1);
           break;
         case "ARRIVED":
           setCurrentStage(-1);
       }
     }
-  }, []);
+  }, [orderDetails]);
 
   // Helper functions
   const renderContent = () => {
@@ -65,34 +62,39 @@ function OrderSegment({ orderDetails }) {
       case 0:
         return (
           <MakeOrderSegment
-            listing={listing.current}
+            listing={listing}
             orderQuantities={orderQuantities}
             setOrderQuantities={setOrderQuantities}
             setCurrentStage={setCurrentStage}
+            items={items}
+            userID={userID}
+            orderDetails={orderDetails}
           />
         );
         break;
       case 1:
         return (
           <ViewSummarySegment
-            listing={listing.current}
+            listing={listing}
             orderQuantities={orderQuantities}
             setCurrentStage={setCurrentStage}
+            items={items}
           />
         );
       case 2:
         return (
           <CheckFinalSegment
-            listing={listing.current}
+            listing={listing}
             orderQuantities={orderQuantities}
-            orderDetails={orderDetails}
+            items={items}
+            userID={userID}
           />
         );
       case 3:
         return (
           <CollectOrderSegment
-            listing={listing.current}
-            orderQuantities={orderQuantities}
+            listing={listing}
+            items={items}
             orderDetails={orderDetails}
           />
         );

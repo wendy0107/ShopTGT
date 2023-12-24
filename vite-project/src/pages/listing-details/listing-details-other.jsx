@@ -1,20 +1,17 @@
-import React, { useRef, useContext } from "react";
+import React, { useState, useContext } from "react";
 import Navbar from "../../components/navbar";
 import { NavContext } from "../../context/navContext";
 import { useEffect } from "react";
-import {
-  orderDetails,
-  listingDetails,
-  listingOwner,
-} from "../../listing-examples";
+import { listingOwner } from "../../listing-examples";
 import { CardMedia, Divider, Typography, Alert } from "@mui/material";
 import "./listing-details.css";
 import OrderSegment from "../../components/order-segment/order-segment";
 import ContactCard from "../../components/contact-card";
 
-function ListingDetailsOther() {
-  const listing = useRef();
-  listing.current = listingDetails;
+function ListingDetailsOther({ listing, items, userID, ownerDetails }) {
+  // const listing = useRef();
+  // listing = listingDetails;
+  const [orderDetails, setOrderDetails] = useState(null);
 
   // setting Navbar
   const { setOnDashboard } = useContext(NavContext);
@@ -22,17 +19,31 @@ function ListingDetailsOther() {
     setOnDashboard(false);
   }, []);
 
+  // try to retrieve existing order
+  const retrieveExistingOrder = async () => {
+    // console.log('listing id', listing.id)
+    // console.log('user ID', userID)
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/${listing.id}/${userID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      // console.log('listing-details-other get order', data)
+      setOrderDetails(data.order[0]);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
+  };
+
   useEffect(() => {
-    // Fetch listings data from the API
-    // axios.get('/api/listings') // Replace with your actual API endpoint
-    //   .then((response) => {
-    //     setListings(response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error fetching listings:', error);
-    //   });
-    // Listing : {imageUrl, title, description}
-  }, []);
+    retrieveExistingOrder();
+  }, [listing]);
 
   return (
     <div className="listing-details-page">
@@ -44,13 +55,13 @@ function ListingDetailsOther() {
               <CardMedia
                 component="img"
                 height="200"
-                image={listing.current.imageUrl} // Assuming you have an imageUrl property in your listing data
-                alt={listing.current.title}
+                image={listing.imageUrl} // Assuming you have an imageUrl property in your listing data
+                alt={listing.title}
                 sx={{ boxSizing: "border-box", width: "200px", mb: "1rem" }}
               />
               <div>
                 <Typography variant="h4" component="h2">
-                  {listing.current.title}
+                  {listing.title}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -58,31 +69,31 @@ function ListingDetailsOther() {
                   gutterBottom
                   sx={{ paddingLeft: "0.3rem", paddingBottom: "0.3rem" }}
                 >
-                  posted by {listing.current.owner} on{" "}
-                  {listing.current.uploadDate}
+                  posted by {ownerDetails?.email} on {listing.creation_date}
                 </Typography>
                 <Typography
                   variant="body1"
                   color="textPrimary"
                   sx={{ paddingLeft: "0.3rem" }}
                 >
-                  {listing.current.description}
+                  {listing.description}
                 </Typography>
               </div>
             </div>
             <Alert severity="info" sx={{ margin: "1rem" }}>
-              Collection point: {listing.current.collectionPoint}
+              Collection point: {listing.collection_point}
             </Alert>
-            <ContactCard
-              name={listingOwner.name}
-              phone={listingOwner.phone}
-              email={listingOwner.email}
-            />
+            <ContactCard userDetails={ownerDetails} />
             <Divider
               gutterBottom
               sx={{ paddingBottom: "2rem", marginBottom: "1rem" }}
             />
-            <OrderSegment orderDetails={orderDetails} />
+            <OrderSegment
+              orderDetails={orderDetails}
+              items={items}
+              listing={listing}
+              userID={userID}
+            />
           </div>
         </>
       ) : (

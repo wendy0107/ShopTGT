@@ -10,7 +10,7 @@ import OrderSummary from "../../components/order-segment/view-summary-segment/or
 import ClickableCopyCard from "../../components/clickable-copy-card";
 // import { useLocation } from "react-router-dom";
 
-function ListingDetailsOwner({ listing, items, userID }) {
+function ListingDetailsOwner({ listing, items, userID, ownerDetails }) {
   // const location = useLocation();
   // const pathname = location.pathname; // Full path (e.g., "/users/123")
   // const search = location.search; // Query string (e.g., "?sort=name")
@@ -42,7 +42,7 @@ function ListingDetailsOwner({ listing, items, userID }) {
                   gutterBottom
                   sx={{ paddingLeft: "0.3rem", paddingBottom: "0.3rem" }}
                 >
-                  posted by {listing.owner} on
+                  posted by {ownerDetails?.email} on
                   {listing.creation_date}
                 </Typography>
                 <Typography
@@ -61,9 +61,7 @@ function ListingDetailsOwner({ listing, items, userID }) {
             <ClickableCopyCard text={window.location.href} />
 
             <ContactCard
-              name={listingOwner.name}
-              phone={listingOwner.phone}
-              email={listingOwner.email}
+              userDetails={ownerDetails}
             />
 
             <Typography variant="h6" sx={{ margin: "1rem" }}>

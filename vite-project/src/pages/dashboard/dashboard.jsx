@@ -16,7 +16,7 @@ function Dashboard({ ownerEmail }) {
   const [ownerListings, setOwnerListings] = useState([]);
   const [joinedListings, setJoinedListings] = useState([]);
 
-  console.log('dashboard', userID)
+  // console.log('dashboard', userID)
 
   // Data loading
   const getOwnerListings = async () => {

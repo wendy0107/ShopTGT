@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-function CollectOrderSegment({ listing, orderQuantities, orderDetails }) {
+function CollectOrderSegment({ listing, items, orderDetails }) {
   const [isCollected, setIsCollected] = useState(false);
 
   const handleClick = () => {
@@ -26,14 +26,14 @@ function CollectOrderSegment({ listing, orderQuantities, orderDetails }) {
       </Typography>
 
       <Alert severity="info" sx={{ mt: 5 }} sx={{ margin: "1rem" }}>
-        {listing.collectionPoint
-          ? `Please collect it from: ${listing.collectionPoint}.`
+        {listing.collection_point
+          ? `Please collect it from: ${listing.collection_point}.`
           : "The owner will contact you for more delivery arrangements."}
       </Alert>
 
       <OrderSummary
-        items={listing.items}
-        orderQuantities={orderDetails.finalQuantities}
+        items={items}
+        orderQuantities={orderDetails.finalised_quantities}
         toDisplayAll={false}
       />
 
@@ -45,13 +45,13 @@ function CollectOrderSegment({ listing, orderQuantities, orderDetails }) {
         </AccordionSummary>
         <AccordionDetails>
           <OrderSummary
-            items={listing.items}
-            orderQuantities={orderQuantities}
+            items={items}
+            orderQuantities={orderDetails.item_quantities}
             toDisplayAll={true}
           />
         </AccordionDetails>
       </Accordion>
-      <div style={{textAlign: 'right', margin: "1rem"}}>
+      <div style={{ textAlign: "right", margin: "1rem" }}>
         <Button variant="contained" color={buttonColor} onClick={handleClick}>
           {buttonText}
         </Button>

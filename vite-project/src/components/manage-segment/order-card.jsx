@@ -14,7 +14,7 @@ function OrderCard({ buyerEmail, phone, items, orderQuantities }) {
         <Typography variant="h6" gutterBottom component="div" sx={{fontSize: '0.8rem'}}>
           contact: {phone}
         </Typography>
-        <OrderSummary items={items} orderQuantities={orderQuantities} toDisplayAll={false}/>
+        <OrderSummary items={items} orderQuantities={orderQuantities} toDisplayAll={true}/>
       </CardContent>
     </Card>
   );
