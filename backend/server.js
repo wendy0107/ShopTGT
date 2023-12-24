@@ -29,9 +29,12 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
     console.log(req.body)
     console.log(req.body.email)
-    const email = req.body.email;
+    const { email, phone } = req.body
 
-    let {data, error} = await supabase.rpc('add_user', {email_input : email})
+    let {data, error} = await supabase.rpc('add_user_with_phone', {
+        email_input : email,
+        phone_number : phone
+    })
     if (error) {
         console.error(error)
         res.status(500).json({ error: 'Internal Server Error', message: error.message });
