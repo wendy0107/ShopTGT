@@ -189,7 +189,7 @@ app.put('/listings/:listing_id/:user_id/order', async (req, res) => {
         console.log("Updated item_quantities", data)
         res.status(200).json({message: "Successfully updated order", data})
     }
-});S
+});
 
 app.put('/user/:user_id/update-user', async (req, res) => {
     const user_id = req.params.user_id
