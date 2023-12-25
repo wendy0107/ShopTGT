@@ -9,6 +9,6 @@ RUN npm install
 COPY server.js ./
 COPY .env ./
 
-EXPOSE 3000
+EXPOSE 3000w
 
 CMD ["node", "server.js"]

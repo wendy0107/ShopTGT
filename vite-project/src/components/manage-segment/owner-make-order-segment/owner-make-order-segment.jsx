@@ -9,11 +9,15 @@ function OwnerMakeOrderSegment({
   otherOrders,
   items,
   setCurrentStage,
+  ownerDetails,
+  buyerDetails
 }) {
   const [orders, setOrders] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
 
   useEffect(() => {
     setOrders([...ownerOrder, ...otherOrders]);
+    setUserDetails([ownerDetails, ...buyerDetails])
   }, [ownerOrder, otherOrders]);
 
   const handleReopen = () => {
@@ -26,7 +30,7 @@ function OwnerMakeOrderSegment({
   return (
     <>
       <TotalOrderList orders={orders} items={items} />
-      <AdjustFinalOrderSection orders={orders} items={items} />
+      <AdjustFinalOrderSection orders={orders} items={items} userDetails={userDetails}/>
 
       <div
         style={{

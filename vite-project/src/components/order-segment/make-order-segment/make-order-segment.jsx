@@ -121,7 +121,6 @@ function MakeOrderSegment({
         items={items}
         orderQuantities={orderQuantities}
         setOrderQuantities={setOrderQuantities}
-        // setRemainingQuantity={setRemainingQuantity}
       />
       <AlertModal
         open={openAlertModal}

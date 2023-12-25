@@ -11,7 +11,9 @@ function ManageSegment({ listing, items, userID }) {
   // States
   const [currentStage, setCurrentStage] = useState("OPEN");
   const [ownerOrder, setOwnerOrder] = useState([]);
+  const [ownerDetails, setOwnerDetails] = useState([]);
   const [otherOrders, setOtherOrders] = useState([]);
+  const [otherBuyerDetails, setOtherBuyerDetails] = useState([]);
 
   // Update current stage upon loading page
   useEffect(() => {
@@ -30,8 +32,18 @@ function ManageSegment({ listing, items, userID }) {
         }
       );
       const data = await response.json();
-      console.log("owner order", data);
+      // console.log("owner order", data);
       setOwnerOrder(data.order);
+
+      const response_1 = await fetch(`http://localhost:3000/user/${userID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data_1 = await response_1.json();
+      // console.log("owner order details", data_1);
+      setOwnerDetails(data_1.user_details[0]);
     } catch (error) {
       console.error("Error with backend:", error);
     }
@@ -40,7 +52,8 @@ function ManageSegment({ listing, items, userID }) {
   const getOtherOrders = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/orders/${listing.id}/buyers`,
+        // `http://localhost:3000/orders/${listing.id}/buyers`,
+        `http://localhost:3000/orders/${listing.id}/buyers-details`,
         {
           method: "GET",
           headers: {
@@ -51,12 +64,17 @@ function ManageSegment({ listing, items, userID }) {
       const data = await response.json();
       // console.log('other order', data)
       setOtherOrders(data.orders);
+      setOtherBuyerDetails(
+        data.buyers.map((buyer) => {
+          return { email: buyer.buyer_email, phone: buyer.buyer_phone };
+        })
+      );
     } catch (error) {
       console.error("Error with backend:", error);
     }
   };
 
-  // Get latest order for everyone every time the status changes 
+  // Get latest order for everyone every time the status changes
   useEffect(() => {
     getOwnerOrder();
     getOtherOrders();
@@ -90,7 +108,9 @@ function ManageSegment({ listing, items, userID }) {
           <AcceptOrderSegment
             listing={listing}
             ownerOrder={ownerOrder}
+            ownerDetails={ownerDetails}
             otherOrders={otherOrders}
+            buyerDetails={otherBuyerDetails}
             items={items}
             setCurrentStage={updateListingStatus}
           />
@@ -101,7 +121,9 @@ function ManageSegment({ listing, items, userID }) {
           <OwnerMakeOrderSegment
             listing={listing}
             ownerOrder={ownerOrder}
+            ownerDetails={ownerDetails}
             otherOrders={otherOrders}
+            buyerDetails={otherBuyerDetails}
             items={items}
             setCurrentStage={updateListingStatus}
           />
@@ -112,7 +134,9 @@ function ManageSegment({ listing, items, userID }) {
           <WaitOrderSegment
             listing={listing}
             ownerOrder={ownerOrder}
+            ownerDetails={ownerDetails}
             otherOrders={otherOrders}
+            buyerDetails={otherBuyerDetails}
             items={items}
             setCurrentStage={updateListingStatus}
           />
@@ -124,7 +148,9 @@ function ManageSegment({ listing, items, userID }) {
             listing={listing}
             items={items}
             ownerOrder={ownerOrder}
+            ownerDetails={ownerDetails}
             otherOrders={otherOrders}
+            buyerDetails={otherBuyerDetails}
             setCurrentStage={updateListingStatus}
           />
         );
