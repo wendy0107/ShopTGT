@@ -12,12 +12,14 @@ import OthersOrderSection from "../accept-order-segment/others-order-section";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function WaitOrderSegment({
-  listing,
   ownerOrder,
   otherOrders,
   setCurrentStage,
   items,
+  ownerDetails,
+  buyerDetails
 }) {
+
   const handleUndoFinalize = () => {
     setCurrentStage("CLOSED");
   };
@@ -65,12 +67,14 @@ function WaitOrderSegment({
             items={items}
             titleOverride={"Your order"}
             showFinalOrder={true}
+            buyerDetails={[ownerDetails]}
           />
           <Divider sx={{ margin: "1rem 0 1rem 0" }} />
           <OthersOrderSection
             orders={otherOrders}
             items={items}
             showFinalOrder={true}
+            buyerDetails={buyerDetails}
           />
         </AccordionDetails>
       </Accordion>

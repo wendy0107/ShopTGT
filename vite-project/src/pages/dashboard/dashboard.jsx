@@ -11,12 +11,32 @@ import CreateListingDialog from "../../components/create-listing-dialog";
 import { UserContext } from "../../context/userContext";
 
 function Dashboard({ ownerEmail }) {
-
   const { userID } = useContext(UserContext);
   const [ownerListings, setOwnerListings] = useState([]);
   const [joinedListings, setJoinedListings] = useState([]);
+  const [joinedListingsOwnerDetails, setJoinedListingsOwnerDetails] = useState([]);
 
   // console.log('dashboard', userID)
+  const [ownerDetails, setOwnerDetails] = useState(null);
+
+  const getOwnerDetails = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/user/${userID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      // console.log("contact details", data);
+      setOwnerDetails(data.user_details[0]);
+    } catch (error) {
+      console.error("Error with backend:", error);
+    }
+  };
+  useEffect(() => {
+    getOwnerDetails();
+  }, []);
 
   // Data loading
   const getOwnerListings = async () => {
@@ -40,7 +60,7 @@ function Dashboard({ ownerEmail }) {
   const getJoinedListings = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/orders/${userID}`,
+        `http://localhost:3000/orders/${userID}/listing_owner`,
         {
           method: "GET",
           headers: {
@@ -49,7 +69,9 @@ function Dashboard({ ownerEmail }) {
         }
       );
       const data = await response.json();
+      console.log(data);
       setJoinedListings(data.listings);
+      setJoinedListingsOwnerDetails(data.owners)
     } catch (error) {
       console.error("Error with backend:", error);
     }
@@ -95,7 +117,11 @@ function Dashboard({ ownerEmail }) {
     return ownerListings.length > 0 ? (
       <div className="owner-listings">
         {ownerListings.map((listing) => (
-          <Listing key={listing.id} listing={listing} />
+          <Listing
+            key={listing.id}
+            listing={listing}
+            userDetails={ownerDetails}
+          />
         ))}
       </div>
     ) : (
@@ -106,8 +132,8 @@ function Dashboard({ ownerEmail }) {
   const renderJoinedListings = () => {
     return joinedListings.length > 0 ? (
       <div className="joined-listings">
-        {joinedListings.map((listing) => (
-          <Listing key={listing.id} listing={listing} />
+        {joinedListings.map((listing, index) => (
+          <Listing key={listing.id} listing={listing} userDetails={{'email': joinedListingsOwnerDetails[index]?.user_email}}/>
         ))}
       </div>
     ) : (
@@ -141,7 +167,11 @@ function Dashboard({ ownerEmail }) {
             </Button>
           </ThemeProvider>
         </div>
-        <CreateListingDialog setOpen={setDialogOpen} open={dialogOpen} getOwnerListings={getOwnerListings}/>
+        <CreateListingDialog
+          setOpen={setDialogOpen}
+          open={dialogOpen}
+          getOwnerListings={getOwnerListings}
+        />
         {renderOwnerListings()}
         <Divider sx={{ margin: "2rem" }} />
         <Typography variant="h6" sx={{ mb: "1rem", fontWeight: "bold" }}>

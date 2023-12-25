@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { Typography } from "@mui/material";
 
-function PayList({ orders, items }) {
+function PayList({ orders, items, userDetails }) {
   //   const [paidStatuses, setPaidStatuses] = useState(
   //     orders.map((order) => order.paid)
   //   );
@@ -60,7 +60,7 @@ function PayList({ orders, items }) {
             {orders.map((order, index) => (
               <TableRow key={order.id}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{"hngshanhern@gmailcom"}</TableCell>
+                <TableCell>{userDetails?.[index].email}</TableCell>
                 <TableCell align="right">
                   {/* Calculate Payable Amount Here */}
                   {/* Assuming items and orderQuantities are structured correctly */}

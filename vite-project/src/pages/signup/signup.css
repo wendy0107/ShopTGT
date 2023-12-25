@@ -40,7 +40,7 @@ body {
 }
 
 .inputs {
-    margin-top: 55px;
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -85,17 +85,14 @@ body {
 } */
 
 .submit-container {
-    display: flex;
-    gap: 30px;
-    margin: 40px 0px 10px 60px;
+    margin:2rem 4rem 0rem 4rem;
+    text-align: center;
 }
 
 .submit {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 220px;
-    height: 59px;
+    display: inline-block;
+    text-align: center;
+    padding: 1rem 5rem;
     color: #fff;
     background: #4c00b4;
     border-radius: 50px;

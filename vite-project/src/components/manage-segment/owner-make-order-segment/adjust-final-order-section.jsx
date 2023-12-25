@@ -7,7 +7,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditableOrderCard from "./editable-order-card";
 import { Alert } from "@mui/material";
 
-function AdjustFinalOrderSection({ orders, items }) {
+function AdjustFinalOrderSection({ orders, items, userDetails }) {
   function allItemQuantitiesPositive(orders) {
     return orders.every((order) => {
       return order?.item_quantities.every((quantity) => quantity > 0);
@@ -33,7 +33,7 @@ function AdjustFinalOrderSection({ orders, items }) {
               return (
                 <EditableOrderCard
                   key={index}
-                  buyerEmail={"dummy variable"}
+                  buyerEmail={userDetails?.[index]?.email}
                   items={items}
                   order={order}
                 />

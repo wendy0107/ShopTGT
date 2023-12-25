@@ -13,6 +13,7 @@ function YourOrderSection({
   ownerOrderQuantities,
   setOwnerOrderQuantities,
   userID,
+  ownerDetails,
 }) {
   // const hasOrders = ownerOrderQuantities.some((quantity) => quantity > 0);
   const [isOwnerOrderAdded, setIsOwnerOrderAdded] = useState(false);
@@ -167,7 +168,8 @@ function YourOrderSection({
 
       {isOwnerOrderAdded ? (
         <OrderCard
-          buyerEmail={exampleOwner.email}
+          buyerEmail={ownerDetails?.email}
+          phone={ownerDetails?.phone}
           items={items}
           orderQuantities={ownerOrderQuantities}
         />

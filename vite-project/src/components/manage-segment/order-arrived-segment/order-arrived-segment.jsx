@@ -17,8 +17,10 @@ function OrderArrivedSegment({
   ownerOrder,
   otherOrders,
   setCurrentStage,
+  ownerDetails,
+  buyerDetails,
 }) {
-    const handleUndoArrival = () => {
+  const handleUndoArrival = () => {
     setCurrentStage("FINALISED");
   };
 
@@ -34,7 +36,7 @@ function OrderArrivedSegment({
         We have informed the other buyers about the arrival!
       </Typography>
 
-      <PayList orders={orders} items={items} />
+      <PayList orders={orders} items={items} userDetails={[ownerDetails, ...buyerDetails]}/>
 
       <div style={{ textAlign: "left", margin: "2rem 0 2rem" }}>
         <Button
@@ -56,12 +58,14 @@ function OrderArrivedSegment({
             items={items}
             titleOverride={"Your order"}
             showFinalOrder={true}
+            buyerDetails={[ownerDetails]}
           />
           <Divider sx={{ margin: "1rem 0 1rem 0" }} />
           <OthersOrderSection
             orders={otherOrders}
             items={items}
             showFinalOrder={true}
+            buyerDetails={buyerDetails}
           />
         </AccordionDetails>
       </Accordion>

@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material"; // Assuming you're using Material UI
 import { Link } from "react-router-dom";
 
-function Listing({ listing }) {
+function Listing({ listing, userDetails }) {
   return (
     <Link
       to={`/listing/${listing.id}`}
@@ -27,7 +27,7 @@ function Listing({ listing }) {
             {listing.title}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            posted by {listing.owner} on {listing.creation_date}
+            posted by {userDetails?.email} on {listing.creation_date}
           </Typography>
         </CardContent>
       </Card>

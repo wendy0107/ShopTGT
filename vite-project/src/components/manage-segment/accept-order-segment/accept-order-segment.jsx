@@ -8,9 +8,11 @@ function AcceptOrderSegment({
   ownerOrder,
   otherOrders,
   items,
+  buyerDetails,
+  ownerDetails,
   // ownerOrderQuantities,
   // setOwnerOrderQuantities,
-  setCurrentStage,
+  setCurrentStage
 }) {
   const [ownerOrderQuantities, setOwnerOrderQuantities] = useState(
     items.map((item) => 0)
@@ -35,6 +37,7 @@ function AcceptOrderSegment({
         listing={listing}
         items={items}
         ownerOrderQuantities={ownerOrderQuantities}
+        ownerDetails={ownerDetails}
         setOwnerOrderQuantities={setOwnerOrderQuantities}
         userID={listing.owner_id}
       />
@@ -43,6 +46,7 @@ function AcceptOrderSegment({
         orders={otherOrders}
         items={items}
         showFinalOrder={false}
+        buyerDetails={buyerDetails}
       />
       <div style={{ textAlign: "right", margin: "1rem" }}>
         <Button variant="contained" onClick={handleCloseOrder}>

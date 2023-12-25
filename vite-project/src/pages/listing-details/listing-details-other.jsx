@@ -21,8 +21,6 @@ function ListingDetailsOther({ listing, items, userID, ownerDetails }) {
 
   // try to retrieve existing order
   const retrieveExistingOrder = async () => {
-    // console.log('listing id', listing.id)
-    // console.log('user ID', userID)
     try {
       const response = await fetch(
         `http://localhost:3000/orders/${listing.id}/${userID}`,

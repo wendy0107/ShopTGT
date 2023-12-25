@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import "./signup.css";
+import { Typography } from "@mui/material";
 
 export const SignUp = ({ lastPath }) => {
   const { userID, setUserID, setUserEmail } = useContext(UserContext);
@@ -63,10 +64,18 @@ export const SignUp = ({ lastPath }) => {
           {/* <input type="text" placeholder="Phone number" onChange={(e) => setPhone(e.target.value)} /> */}
         </div>
       </div>
-      <div className="submit-container">
-        <div className="submit" onClick={(e) => handleLogin(e)}>
-          {" "}
-          Login{" "}
+      <Typography
+        variant="caption"
+        sx={{ marginLeft: "4rem", marginTop: "0.5rem", marginBottom: "-1rem" }}
+      >
+        {" "}
+        Note: Your email to tied to your phone number upon sign up. <br />
+        Please use the same email and phone number combination to log in
+        succesfully.
+      </Typography>
+      <div className="submit-container" style={{ display: 'block' }}>
+        <div className="submit" onClick={(e) => handleLogin(e)} >
+          Login
         </div>
         {/* <div className={action==="Login"?"submit gray":"submit"} onClick={()=>{setAction("Sign Up")}}> Sign Up </div>
                 <div className={action==="Sign Up"?"submit gray":"submit"} onClick={()=>{setAction("Login")}}> Login </div> */}
