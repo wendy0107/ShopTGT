@@ -7,7 +7,7 @@ body {
     flex-direction: column;
     /* margin: auto; */
     margin: auto;
-    margin-top: 80px;
+    margin-top: 140px;
     /* margin-bottom: 10vh; */
     background: #fff;
     width: 600px;
@@ -30,6 +30,7 @@ body {
     font-size: 30px;
     font-weight: 700;
     font-family:sans-serif;
+    margin-top: 20px;
 }
 
 .underline {
